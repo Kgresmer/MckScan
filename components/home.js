@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
+import ProductScanRNCamera from "./product-scanner";
 
 export default class HomeScreen extends Component {
     static navigationOptions = {
@@ -11,6 +12,7 @@ export default class HomeScreen extends Component {
         return (
             <View style={styles.container}>
                 <Text style={styles.title}>McKesson Scan</Text>
+                <ProductScanRNCamera />
             </View>
         )
     }
