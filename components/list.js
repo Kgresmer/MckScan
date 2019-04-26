@@ -6,11 +6,13 @@ const ListScreen = () => {
     const [barcodeList, setBarcodeList] = useContext(BarcodeListContext);
 
     const deleteItem = (item) => {
+        const tempArray = [];
         for( let i = 0; i < barcodeList.length; i++){
-            if ( barcodeList[i].key === item.key) {
-                setBarcodeList(barcodeList.splice(i, 1));
+            if ( barcodeList[i].key !== item.key) {
+                tempArray.push(barcodeList[i]);
             }
         }
+        setBarcodeList(tempArray);
     };
 
     return (
@@ -20,11 +22,11 @@ const ListScreen = () => {
                 data={barcodeList}
                 renderItem={({item}) =>
                     <View style={styles.item}>
-                        <Text style={styles.fontStyles}>Qty: 3</Text>
-                        <Text style={styles.fontStyles}>{item.data}</Text>
+                        <Text style={styles.qtyFont}>Qty: 3</Text>
+                        <Text style={styles.dataFont}>{item.data}</Text>
                         <TouchableOpacity style={{flex: 1}}
                          onPress={(item) => deleteItem(item)}>
-                            <Text style={styles.fontStyles}>Remove</Text>
+                            <Text style={styles.removeFont}>Remove</Text>
                         </TouchableOpacity>
                     </View>}
             />
@@ -44,7 +46,23 @@ const styles = StyleSheet.create({
         padding: 5,
         marginBottom: 5
     },
-    fontStyles: {
+    qtyFont: {
+        flex: 1,
+        textAlign: 'center',
+        color: 'white',
+        fontSize: 14,
+        fontWeight: 'bold',
+        marginRight: 5
+    },
+    dataFont: {
+        flex: 3,
+        textAlign: 'center',
+        color: 'white',
+        fontSize: 14,
+        fontWeight: 'bold',
+    },
+    removeFont: {
+        flex: 1,
         textAlign: 'center',
         color: 'white',
         fontSize: 14,
