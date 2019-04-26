@@ -1,25 +1,30 @@
 
-import React, { Component } from 'react';
-import {  StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import React, { useContext } from 'react';
+import {ActivityIndicator, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import { RNCamera } from 'react-native-camera';
+import {LoadingContext, PicContext, BarcodeListContext } from "../store";
+import BarcodeMask from 'react-native-barcode-mask';
 
-class ProductScanRNCamera extends Component {
+const ProductScanRNCamera = () => {
 
-    constructor(props) {
-        super(props);
-        this.camera = null;
-        this.barcodeCodes = [];
+    this.camera = null;
+    this.barcodeCodes = [];
+    const [, setPicData] = useContext(PicContext);
+    const [loading, setLoading] = useContext(LoadingContext);
+    const [barcodeList, setBarcodeList] = useContext(BarcodeListContext);
+    this.setPictureData = setPicData;
+    this.setLoadingIndicator = setLoading;
+    this.addToBarcodeList = setBarcodeList;
 
-        this.state = {
-            camera: {
-                type: RNCamera.Constants.Type.back,
-                flashMode: RNCamera.Constants.FlashMode.auto,
-                barcodeFinderVisible: true
-            }
-        };
-    }
+    this.state = {
+        camera: {
+            type: RNCamera.Constants.Type.back,
+            flashMode: RNCamera.Constants.FlashMode.auto,
+            barcodeFinderVisible: true
+        }
+    };
 
-    onBarCodeRead(scanResult) {
+    const onBarCodeRead = (scanResult) => {
         console.warn(scanResult.type);
         console.warn(scanResult.data);
         if (scanResult.data != null) {
@@ -27,12 +32,28 @@ class ProductScanRNCamera extends Component {
                 this.barcodeCodes.push(scanResult.data);
                 console.warn('onBarCodeRead call');
             }
+            this.setPictureData(scanResult);
+            scanResult = {...scanResult, key: scanResult.data};
+            if (barcodeList.length > 0) {
+                for (var i = 0; i < barcodeList.length; i++) {
+                    if (barcodeList[i].key === scanResult.key) {
+                        return;
+                    }
+                }
+            }
+            this.addToBarcodeList([...barcodeList, scanResult])
         }
-        return;
     }
 
-    render() {
-        return (
+    let cameraView;
+    if (loading === 'true') {
+        cameraView = (
+            <View style={styles.loading}>
+                <ActivityIndicator size='large' />
+            </View>
+        )
+    } else {
+        cameraView = (
             <View style={styles.container}>
                 <RNCamera
                     ref={ref => {
@@ -44,39 +65,34 @@ class ProductScanRNCamera extends Component {
                     barcodeFinderBorderColor="white"
                     barcodeFinderBorderWidth={2}
                     defaultTouchToFocus
-                    onBarCodeRead={this.onBarCodeRead.bind(this)}
+                    onBarCodeRead={onBarCodeRead.bind(this)}
                     onFocusChanged={() => {}}
                     onZoomChanged={() => {}}
                     style={styles.preview}
                     type={RNCamera.Constants.Type.back}
-                    flashMode={RNCamera.Constants.FlashMode.on}
+                    flashMode={RNCamera.Constants.FlashMode.auto}
                     androidCameraPermissionOptions={{
                         title: 'Permission to use camera',
                         message: 'We need your permission to use your camera',
                         buttonPositive: 'Ok',
                         buttonNegative: 'Cancel',
                     }}
-                    onGoogleVisionBarcodesDetected={({ barcodes }) => {
-                        console.log(barcodes);
-                    }}
-                />
-                <View style={{ flex: 0, flexDirection: 'row', justifyContent: 'center' }}>
-                    <TouchableOpacity onPress={this.takePicture.bind(this)} style={styles.capture}>
-                        <Text style={{ fontSize: 14 }}> SNAP </Text>
-                    </TouchableOpacity>
+                >
+                    <BarcodeMask showAnimatedLine={false} />
+                </RNCamera>
+                <View style={{ flex: 0, flexDirection: 'row', justifyContent: 'center', backgroundColor: 'white' }}>
+                        <Text style={{ fontSize: 14 }}> Move camera to focus on barcode </Text>
                 </View>
             </View>
-        );
+        )
     }
 
-    takePicture = async function() {
-        console.log('picture taken!!!!')
-        if (this.camera) {
-            const options = { quality: 0.5, base64: true };
-            const data = await this.camera.takePictureAsync(options);
-            console.log(data.uri);
-        }
-    };
+    return (
+        <React.Fragment>
+            {cameraView}
+        </React.Fragment>
+    );
+
 }
 
 const styles = StyleSheet.create({
@@ -99,6 +115,15 @@ const styles = StyleSheet.create({
         alignSelf: 'center',
         margin: 20,
     },
+    loading: {
+        position: 'absolute',
+        left: 0,
+        right: 0,
+        top: 0,
+        bottom: 0,
+        alignItems: 'center',
+        justifyContent: 'center'
+    }
 });
 
 export default ProductScanRNCamera;
