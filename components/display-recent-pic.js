@@ -4,6 +4,7 @@ import {  StyleSheet, Text, View } from 'react-native';
 
 const DisplayRecentPic = () => {
     const [picData, setPicData] = useContext(PicContext);
+    console.log(picData);
 
     return (
         <View>

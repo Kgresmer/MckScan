@@ -33,7 +33,7 @@ const ProductScanRNCamera = () => {
                 console.warn('onBarCodeRead call');
             }
             this.setPictureData(scanResult);
-            scanResult = {...scanResult, key: scanResult.data};
+            scanResult = {...scanResult, key: scanResult.data, qty: 1};
             if (barcodeList.length > 0) {
                 for (var i = 0; i < barcodeList.length; i++) {
                     if (barcodeList[i].key === scanResult.key) {
@@ -41,7 +41,7 @@ const ProductScanRNCamera = () => {
                     }
                 }
             }
-            this.addToBarcodeList([...barcodeList, scanResult])
+            this.addToBarcodeList([...barcodeList, scanResult]);
         }
     }
 
