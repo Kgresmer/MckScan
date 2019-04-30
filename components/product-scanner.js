@@ -1,20 +1,20 @@
 
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import {ActivityIndicator, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import { RNCamera } from 'react-native-camera';
 import {LoadingContext, PicContext, BarcodeListContext } from "../store";
 import BarcodeMask from 'react-native-barcode-mask';
+const axios = require('axios');
+
 
 const ProductScanRNCamera = () => {
 
     this.camera = null;
     this.barcodeCodes = [];
-    const [, setPicData] = useContext(PicContext);
+    const [picData, setPicData] = useContext(PicContext);
     const [loading, setLoading] = useContext(LoadingContext);
     const [barcodeList, setBarcodeList] = useContext(BarcodeListContext);
     this.setPictureData = setPicData;
-    this.setLoadingIndicator = setLoading;
-    this.addToBarcodeList = setBarcodeList;
 
     this.state = {
         camera: {
@@ -24,8 +24,49 @@ const ProductScanRNCamera = () => {
         }
     };
 
+    useEffect(() => {
+       const fetchDesc = async () => {
+           setLoading('true');
+           const scanResult = {...picData, key: picData.data, qty: 1};
+           console.log('entering fetch desc function');
+           if (barcodeList.length > 0) {
+               for (var i = 0; i < barcodeList.length; i++) {
+                   console.log('looking for existing keys');
+                   if (barcodeList[i].key === scanResult.key) {
+                       console.log('found existing key. exit function');
+                       return;
+                   }
+               }
+           }
+
+           console.log('making get request');
+           axios.get('https://www.barcodelookup.com/'+scanResult.data)
+             .then(function (response) {
+                 const desc = response.data.substring(response.data.indexOf('<h4>') + 4, response.data.indexOf('</h4>'));
+
+                 if (desc) {
+                     scanResult.desc = desc;
+                 } else {
+                     scanResult.desc = "Unavailable";
+                 }
+                 console.log('get request returned !!!');
+                 if (scanResult.key && scanResult.key.length > 5) {
+                     setBarcodeList([...barcodeList, scanResult]);
+                 }
+             })
+             .catch(function (error) {
+                 console.log(' Axios request went wrong!!!!! ');
+                 setBarcodeList([...barcodeList, scanResult]);
+             })
+             .then(() => {
+                 setLoading('false');
+             });
+       };
+
+       fetchDesc();
+    }, [picData]);
+
     const onBarCodeRead = (scanResult) => {
-        console.warn(scanResult.type);
         console.warn(scanResult.data);
         if (scanResult.data != null) {
             if (!this.barcodeCodes.includes(scanResult.data)) {
@@ -33,15 +74,6 @@ const ProductScanRNCamera = () => {
                 console.warn('onBarCodeRead call');
             }
             this.setPictureData(scanResult);
-            scanResult = {...scanResult, key: scanResult.data, qty: 1};
-            if (barcodeList.length > 0) {
-                for (var i = 0; i < barcodeList.length; i++) {
-                    if (barcodeList[i].key === scanResult.key) {
-                        return;
-                    }
-                }
-            }
-            this.addToBarcodeList([...barcodeList, scanResult]);
         }
     }
 

@@ -1,6 +1,7 @@
 import React, {useContext} from "react";
 import {BarcodeListContext, PicContext} from "../store";
-import {FlatList, StyleSheet, Text, View, TouchableOpacity} from 'react-native';
+import {FlatList, StyleSheet, Text, View, TouchableOpacity, TextInput, Image} from 'react-native';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 const ListScreen = () => {
   const [barcodeList, setBarcodeList] = useContext(BarcodeListContext);
@@ -15,6 +16,17 @@ const ListScreen = () => {
     setBarcodeList(tempArray);
   };
 
+  const qtyChange = (newQty, item) => {
+    const tempArray = [];
+    for (let i = 0; i < barcodeList.length; i++) {
+      if (barcodeList[i].key === item.key) {
+        barcodeList[i].qty = newQty;
+      }
+      tempArray.push(barcodeList[i]);
+    }
+    setBarcodeList(tempArray);
+  };
+
   const displayEmptyList = (barcodeList) => {
     if (barcodeList && barcodeList.length > 0) {
       return (
@@ -22,11 +34,23 @@ const ListScreen = () => {
           data={barcodeList}
           renderItem={({item}) =>
             <View style={styles.item}>
-              <Text style={styles.qtyFont}>Qty: {item.qty}</Text>
-              <Text style={styles.dataFont}>{item.data}</Text>
-              <TouchableOpacity style={{flex: 1}}
+              <Text style={{color: 'white', fontSize: 14}}>Qty</Text>
+              <TextInput style={styles.qtyInput}
+                         placeholder=""
+                         defaultValue={'1'}
+                         selectionColor='white'
+                         underlineColorAndroid={'transparent'}
+                         keyboardType={'numeric'}
+                         onChangeText = {(qty)=> qtyChange(qty, item)}
+                         value = {''+item.qty}
+              />
+              <View style={styles.dataView}>
+                <Text style={styles.dataFont}>Description: {item.desc.substring(0, 29)}</Text>
+                <Text style={styles.dataFont}>UPC: {item.data}</Text>
+              </View>
+              <TouchableOpacity style={styles.removeButton}
                                 onPress={() => deleteItem(item)}>
-                <Text style={styles.removeFont}>Remove</Text>
+                <Icon name="close" size={25} color="white" />
               </TouchableOpacity>
             </View>
           }
@@ -59,18 +83,29 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     backgroundColor: '#3185cd',
     padding: 5,
-    marginBottom: 5
+    marginTop: 5
   },
-  qtyFont: {
+  qtyInput: {
     flex: 1,
     textAlign: 'center',
     color: 'white',
     fontSize: 14,
     fontWeight: 'bold',
-    marginRight: 5
+    margin: 10,
+    height: 50,
+    borderRadius: 4,
+    borderWidth: 0.8,
+    borderColor: 'white',
+  },
+  dataView: {
+    flex: 5,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: 50,
   },
   dataFont: {
-    flex: 3,
+    flex: 5,
     textAlign: 'center',
     color: 'white',
     fontSize: 14,
@@ -78,10 +113,19 @@ const styles = StyleSheet.create({
   },
   removeFont: {
     flex: 1,
-    textAlign: 'center',
-    color: 'white',
-    fontSize: 14,
-    fontWeight: 'bold',
+    height: 16,
+    width: 16,
+    padding: 5
+  },
+  removeButton: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: 50,
+    borderRadius: 4,
+    borderWidth: 0.8,
+    borderColor: 'red',
+    margin: 10,
   }
 });
 

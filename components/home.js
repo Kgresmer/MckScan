@@ -38,8 +38,8 @@ const styles = StyleSheet.create({
     },
     buttonContainer: {
         backgroundColor: '#3185cd',
-        paddingVertical: 15,
-        marginBottom: 10,
+        padding: 8,
+        margin: 8,
     },
     buttonText: {
         textAlign: 'center',
