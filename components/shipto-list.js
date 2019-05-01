@@ -1,6 +1,5 @@
 import React from "react";
-import {FlatList, StyleSheet, Text, View} from 'react-native';
-import {CheckBox} from "react-native-elements";
+import {FlatList, StyleSheet, Text, TouchableOpacity, View, CheckBox} from 'react-native';
 
 interface NavStatelessComponent extends React.StatelessComponent {
   navigationOptions?: Object
@@ -8,14 +7,16 @@ interface NavStatelessComponent extends React.StatelessComponent {
 
 const ShipToListScreen: NavStatelessComponent = ({ navigation }) => {
 
+  let checked = null;
+
   const shipToChange = (item) => {
     for (let i = 0; i < shiptoList.length; i++) {
       if (shiptoList[i].key === item.key) {
         shiptoList[i].active = true;
+        checked = item;
       } else {
         shiptoList[i].active = false;
       }
-
     }
   };
 
@@ -60,14 +61,15 @@ const ShipToListScreen: NavStatelessComponent = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <Text>Select your account and shipto</Text>
+      <Text style={{fontSize: 16, color: 'black', textAlign: 'center'}}>Select your account and shipto</Text>
       <FlatList
           data={shiptoList}
+          extraData={checked}
           renderItem={({item}) =>
               <View style={styles.item}>
-                <CheckBox
-                    checked={item.active}
-                    onPress={() => shipToChange(item)}
+                <CheckBox style={{flex: 2}}
+                    value={item.active}
+                    onValueChange={() => shipToChange(item)}
                 />
                 <View style={styles.dataView}>
                   <Text style={styles.dataFont}>Ship To: {item.shipto}</Text>
@@ -76,6 +78,10 @@ const ShipToListScreen: NavStatelessComponent = ({ navigation }) => {
               </View>
           }
       />
+      {checked && (<TouchableOpacity style={styles.buttonContainer}
+                        onPress={() => navigation.navigate('home')}>
+        <Text style={styles.buttonText}>Go to Scanner</Text>
+      </TouchableOpacity>)}
     </View>
   )
 };
@@ -84,6 +90,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: 'column',
+    padding: 5
   },
   item: {
     flex: 1,
@@ -93,10 +100,10 @@ const styles = StyleSheet.create({
     marginTop: 5
   },
   dataView: {
-    flex: 5,
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
+    flex: 3,
+    flexDirection: 'column',
+    justifyContent: 'flex-start',
+    alignItems: 'flex-start',
     height: 50,
   },
   dataFont: {
@@ -121,6 +128,17 @@ const styles = StyleSheet.create({
     borderWidth: 0.8,
     borderColor: 'red',
     margin: 10,
+  },
+  buttonContainer: {
+    backgroundColor: '#3185cd',
+    paddingVertical: 15,
+    marginBottom: 10,
+  },
+  buttonText: {
+    textAlign: 'center',
+    color: 'white',
+    fontSize: 18,
+    fontWeight: 'bold'
   }
 });
 
