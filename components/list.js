@@ -3,7 +3,11 @@ import {BarcodeListContext, PicContext} from "../store";
 import {FlatList, StyleSheet, Text, View, TouchableOpacity, TextInput, Image} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
-const ListScreen = () => {
+interface NavStatelessComponent extends React.StatelessComponent {
+  navigationOptions?: Object
+}
+
+const ListScreen: NavStatelessComponent = ({ navigation }) => {
   const [barcodeList, setBarcodeList] = useContext(BarcodeListContext);
 
   const deleteItem = (item) => {
@@ -128,6 +132,11 @@ const styles = StyleSheet.create({
     margin: 10,
   }
 });
+
+ListScreen.navigationOptions = {
+  title: 'Item List',
+  headerRight: <View />
+};
 
 
 export default ListScreen;
