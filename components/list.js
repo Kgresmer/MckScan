@@ -33,25 +33,38 @@ const ListScreen = () => {
         <FlatList
           data={barcodeList}
           renderItem={({item}) =>
-            <View style={styles.item}>
-              <Text style={{color: 'white', fontSize: 14}}>Qty</Text>
-              <TextInput style={styles.qtyInput}
-                         placeholder=""
-                         defaultValue={'1'}
-                         selectionColor='white'
-                         underlineColorAndroid={'transparent'}
-                         keyboardType={'numeric'}
-                         onChangeText = {(qty)=> qtyChange(qty, item)}
-                         value = {''+item.qty}
-              />
-              <View style={styles.dataView}>
-                <Text style={styles.dataFont}>Description: {item.desc.substring(0, 29)}</Text>
-                <Text style={styles.dataFont}>UPC: {item.data}</Text>
+            <View style={{flexDirection: "column", backgroundColor: '#3185cd', marginTop: 5, marginHorizontal: 5}}>
+              <View style={{flexDirection: 'row', flexShrink: 1, flex: 1, paddingLeft: 25, paddingTop: 10}}>
+                <Text style={styles.dataFont}>UPC: </Text>
+                <Text style={styles.dataFont}>{item.data}</Text>
               </View>
-              <TouchableOpacity style={styles.removeButton}
-                                onPress={() => deleteItem(item)}>
-                <Icon name="close" size={25} color="white" />
-              </TouchableOpacity>
+              <View style={styles.item}>
+
+                <View style={{flexDirection: 'column', flex: 3}}>
+                  <Text style={styles.dataFont}>Qty</Text>
+                  <TextInput style={styles.qtyInput}
+                             placeholder=""
+                             defaultValue={'1'}
+                             selectionColor='white'
+                             underlineColorAndroid={'white'}
+                             keyboardType={'numeric'}
+                             onChangeText = {(qty)=> qtyChange(qty, item)}
+                             value = {''+item.qty}
+                  />
+                </View>
+
+                <View style={{flexDirection: 'column', flexShrink: 1, flex: 7}}>
+                  <Text style={{color: 'white', fontSize: 14, fontWeight: 'bold',}}>Description</Text>
+                  <Text style={styles.dataDesc}>{item.desc}</Text>
+                </View>
+
+                <View style={{flexDirection: 'column', flex: 2, padding: 10}}>
+                  <TouchableOpacity style={styles.removeButton}
+                                    onPress={() => deleteItem(item)}>
+                    <Icon style={styles.removeFont} name="close" size={25} color="white" />
+                  </TouchableOpacity>
+                </View>
+              </View>
             </View>
           }
         />
@@ -81,18 +94,20 @@ const styles = StyleSheet.create({
   item: {
     flex: 1,
     flexDirection: 'row',
-    backgroundColor: '#3185cd',
     padding: 5,
-    marginTop: 5
+    marginTop: 5,
+    marginLeft: 5,
+    marginRight: 5,
+    height: 110
   },
   qtyInput: {
-    flex: 1,
+    flex: 2,
     textAlign: 'center',
     color: 'white',
     fontSize: 14,
     fontWeight: 'bold',
     margin: 10,
-    height: 50,
+    height: 30,
     borderRadius: 4,
     borderWidth: 0.8,
     borderColor: 'white',
@@ -100,32 +115,40 @@ const styles = StyleSheet.create({
   dataView: {
     flex: 5,
     flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    height: 50,
+    alignContent: 'center',
+    height: 40,
   },
   dataFont: {
-    flex: 5,
     textAlign: 'center',
+    alignContent: 'flex-start',
+    flexWrap: 'wrap',
     color: 'white',
     fontSize: 14,
     fontWeight: 'bold',
+    padding: 0
+  },
+  dataDesc: {
+
+    alignSelf: 'center',
+    flexWrap: 'wrap',
+    color: 'white',
+    fontSize: 14,
+    paddingBottom: 10
   },
   removeFont: {
-    flex: 1,
-    height: 16,
-    width: 16,
-    padding: 5
+
   },
   removeButton: {
     flex: 1,
     alignItems: 'center',
+    alignContent: 'center',
     justifyContent: 'center',
-    height: 50,
+    height: 40,
+    backgroundColor: 'red',
     borderRadius: 4,
     borderWidth: 0.8,
     borderColor: 'red',
-    margin: 10,
+    marginHorizontal: 10
   }
 });
 

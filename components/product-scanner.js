@@ -50,13 +50,12 @@ const ProductScanRNCamera = () => {
                      scanResult.desc = "Unavailable";
                  }
                  console.log('get request returned !!!');
-                 if (scanResult.key && scanResult.key.length > 5) {
+                 if (scanResult.key && scanResult.key.length > 9) {
                      setBarcodeList([...barcodeList, scanResult]);
                  }
              })
              .catch(function (error) {
                  console.log(' Axios request went wrong!!!!! ');
-                 setBarcodeList([...barcodeList, scanResult]);
              })
              .then(() => {
                  setLoading('false');
