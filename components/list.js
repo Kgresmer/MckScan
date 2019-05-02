@@ -7,7 +7,7 @@ interface NavStatelessComponent extends React.StatelessComponent {
   navigationOptions?: Object
 }
 
-const ListScreen: NavStatelessComponent = ({ navigation }) => {
+const ListScreen: NavStatelessComponent = ({navigation}) => {
   const [barcodeList, setBarcodeList] = useContext(BarcodeListContext);
 
   const deleteItem = (item) => {
@@ -34,44 +34,52 @@ const ListScreen: NavStatelessComponent = ({ navigation }) => {
   const displayEmptyList = (barcodeList) => {
     if (barcodeList && barcodeList.length > 0) {
       return (
-        <FlatList
-          data={barcodeList}
-          renderItem={({item}) =>
-            <View style={{flexDirection: "column", backgroundColor: '#3185cd', marginTop: 5, marginHorizontal: 5}}>
-              <View style={{flexDirection: 'row', flexShrink: 1, flex: 1, paddingLeft: 25, paddingTop: 10}}>
-                <Text style={styles.dataFont}>UPC: </Text>
-                <Text style={styles.dataFont}>{item.data}</Text>
+        <View style={styles.container}>
+          <View style={{flex: 6}}>
+          <FlatList
+            data={barcodeList}
+            renderItem={({item}) =>
+              <View style={{flexDirection: "column", backgroundColor: '#3185cd', marginTop: 5, marginHorizontal: 5}}>
+                <View style={{flexDirection: 'row', flexShrink: 1, flex: 1, paddingLeft: 25, paddingTop: 10}}>
+                  <Text style={styles.dataFont}>UPC: </Text>
+                  <Text style={styles.dataFont}>{item.data}</Text>
+                </View>
+                <View style={styles.item}>
+
+                  <View style={{flexDirection: 'column', flex: 3}}>
+                    <Text style={styles.dataFont}>Qty</Text>
+                    <TextInput style={styles.qtyInput}
+                               placeholder=""
+                               defaultValue={'1'}
+                               selectionColor='white'
+                               underlineColorAndroid={'white'}
+                               keyboardType={'numeric'}
+                               onChangeText={(qty) => qtyChange(qty, item)}
+                               value={'' + item.qty}
+                    />
+                  </View>
+
+                  <View style={{flexDirection: 'column', flexShrink: 1, flex: 7}}>
+                    <Text style={{color: 'white', fontSize: 14, fontWeight: 'bold',}}>Description</Text>
+                    <Text style={styles.dataDesc}>{item.desc}</Text>
+                  </View>
+
+                  <View style={{flexDirection: 'column', flex: 2, padding: 10}}>
+                    <TouchableOpacity style={styles.removeButton}
+                                      onPress={() => deleteItem(item)}>
+                      <Icon style={styles.removeFont} name="close" size={25} color="white"/>
+                    </TouchableOpacity>
+                  </View>
+                </View>
               </View>
-              <View style={styles.item}>
-
-                <View style={{flexDirection: 'column', flex: 3}}>
-                  <Text style={styles.dataFont}>Qty</Text>
-                  <TextInput style={styles.qtyInput}
-                             placeholder=""
-                             defaultValue={'1'}
-                             selectionColor='white'
-                             underlineColorAndroid={'white'}
-                             keyboardType={'numeric'}
-                             onChangeText = {(qty)=> qtyChange(qty, item)}
-                             value = {''+item.qty}
-                  />
-                </View>
-
-                <View style={{flexDirection: 'column', flexShrink: 1, flex: 7}}>
-                  <Text style={{color: 'white', fontSize: 14, fontWeight: 'bold',}}>Description</Text>
-                  <Text style={styles.dataDesc}>{item.desc}</Text>
-                </View>
-
-                <View style={{flexDirection: 'column', flex: 2, padding: 10}}>
-                  <TouchableOpacity style={styles.removeButton}
-                                    onPress={() => deleteItem(item)}>
-                    <Icon style={styles.removeFont} name="close" size={25} color="white" />
-                  </TouchableOpacity>
-                </View>
-              </View>
-            </View>
-          }
-        />
+            }
+          />
+          </View>
+          <TouchableOpacity style={styles.buttonContainer}
+                            onPress={() => navigation.navigate('submit')}>
+            <Text style={styles.buttonText}>Ready to Submit</Text>
+          </TouchableOpacity>
+        </View>
       )
     } else {
       return (
@@ -132,15 +140,11 @@ const styles = StyleSheet.create({
     padding: 0
   },
   dataDesc: {
-
     alignSelf: 'center',
     flexWrap: 'wrap',
     color: 'white',
     fontSize: 14,
     paddingBottom: 10
-  },
-  removeFont: {
-
   },
   removeButton: {
     flex: 1,
@@ -153,12 +157,24 @@ const styles = StyleSheet.create({
     borderWidth: 0.8,
     borderColor: 'red',
     marginHorizontal: 10
+  },
+  buttonContainer: {
+    height: 55,
+    backgroundColor: '#3185cd',
+    paddingVertical: 15,
+    margin: 8,
+  },
+  buttonText: {
+    textAlign: 'center',
+    color: 'white',
+    fontSize: 18,
+    fontWeight: 'bold'
   }
 });
 
 ListScreen.navigationOptions = {
   title: 'Item List',
-  headerRight: <View />
+  headerRight: <View/>
 };
 
 

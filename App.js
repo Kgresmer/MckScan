@@ -5,6 +5,7 @@ import LoginScreen from "./components/login";
 import ListScreen from "./components/list";
 import Store from "./store";
 import ShipToListScreen from "./components/shipto-list";
+import SubmitScreen from "./components/submit";
 
 type Props = {};
 export default class App extends Component<Props> {
@@ -22,7 +23,8 @@ const AppNavigator = createStackNavigator(
         login: { screen: LoginScreen},
         home: { screen: HomeScreen},
         list: { screen: ListScreen},
-        shipto: { screen: ShipToListScreen}
+        shipto: { screen: ShipToListScreen},
+        submit: { screen: SubmitScreen}
     },
     {
         initialRouteName: "login",

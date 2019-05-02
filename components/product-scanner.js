@@ -28,6 +28,7 @@ const ProductScanRNCamera = () => {
        const fetchDesc = async () => {
            setLoading('true');
            const scanResult = {...picData, key: picData.data, qty: 1};
+           delete scanResult.bounds;
            console.log('entering fetch desc function');
            if (barcodeList.length > 0) {
                for (var i = 0; i < barcodeList.length; i++) {
