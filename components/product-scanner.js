@@ -40,26 +40,33 @@ const ProductScanRNCamera = () => {
            }
 
            console.log('making get request');
-           axios.get('https://www.barcodelookup.com/'+scanResult.data)
-             .then(function (response) {
-                 const desc = response.data.substring(response.data.indexOf('<h4>') + 4, response.data.indexOf('</h4>'));
+           if (scanResult && scanResult.data) {
+               axios.get('https://www.barcodelookup.com/' + scanResult.data)
+                 .then(function (response) {
+                     const desc = response.data.substring(response.data.indexOf('<h4>') + 4, response.data.indexOf('</h4>'));
 
-                 if (desc) {
-                     scanResult.desc = desc;
-                 } else {
-                     scanResult.desc = "Unavailable";
-                 }
-                 console.log('get request returned !!!');
-                 if (scanResult.key && scanResult.key.length > 9) {
-                     setBarcodeList([...barcodeList, scanResult]);
-                 }
-             })
-             .catch(function (error) {
-                 console.log(' Axios request went wrong!!!!! ');
-             })
-             .then(() => {
-                 setLoading('false');
-             });
+                     if (desc) {
+                         scanResult.desc = desc;
+                     } else {
+                         scanResult.desc = "Unavailable";
+                     }
+                     console.log('get request returned !!!');
+                     if (scanResult.key && scanResult.key.length > 9) {
+                         setBarcodeList([...barcodeList, scanResult]);
+                     }
+                     setLoading('false');
+                 })
+                 .catch(function (error) {
+                     console.log(' Axios request went wrong!!!!! ');
+                     setLoading('false');
+                 })
+                 .then(() => {
+                     setLoading('false');
+                 });
+           } else {
+               setLoading('false');
+               return;
+           }
        };
 
        fetchDesc();
