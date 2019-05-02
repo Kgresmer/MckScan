@@ -39,7 +39,7 @@ export default class LoginScreen extends Component {
                                            ref={"txtPassword"}
                                 />
                                 <TouchableOpacity style={styles.buttonContainer}
-                                    onPress={() => this.props.navigation.navigate('home')}>
+                                    onPress={() => this.props.navigation.navigate('shipto')}>
                                     <Text style={styles.buttonText}>Sign In</Text>
                                 </TouchableOpacity>
                             </View>
